@@ -170,8 +170,11 @@ def is_reported(task_id):
 
 def write_results(results_dictionary, output_csv):
     file_exists = os.path.isfile(output_csv)
+    columns_order = ["Mutex_name", "File", "Process name", "First_analysis_duration", "Curr_analysis_duration",
+                      "Delta", "First_Process_Tree", "Following_Process_Tree", "First_Dropped_Files",
+                      "Current_Dropped_Files", "VT_Bad_detection", "VT_Good_detection"]
     with open(output_csv, 'a') as results_output_file:
-        w = csv.DictWriter(results_output_file, fieldnames=results_dictionary.keys())
+        w = csv.DictWriter(results_output_file, fieldnames=columns_order)
         if not file_exists:
             w.writeheader()
         w.writerow(results_dictionary)
@@ -318,7 +321,8 @@ def submit_sample_with_mutant(REST_URL, SAMPLE_FILE, mutant, guest_machine):
     :return: returns id of the current task
     """
     with open(SAMPLE_FILE, "rb") as sample:
-        files = {"file": ("sample_checkout_mutexes", sample)}
+        sample_name = SAMPLE_FILE.replace("\\", "_")
+        files = {"file": (sample_name, sample)}
         data = {"machine": guest_machine, "package": "mutex",
                 "options": "mutexes=" + mutant}
         r = requests.post(REST_URL, files=files, data=data)
