@@ -35,7 +35,9 @@ Required set up:
  
 
 # Usage
-The user can invoke Mystique in the Cuckoo environment from the command line by executing the mystique.py Python script and specifying the path to the malware sample as the parameter: python mystique.py /path/of/file/to/analyze
+The user can invoke Mystique in the Cuckoo environment from the command line by executing the mystique.py Python script and specifying the path to the malware sample as the parameter: 
+
+python mystique.py /path/of/file/to/analyze
  
 In addition, Mystique developers can import and use in other scripts. For example, the user can create a script that downloads malware from a malware repository and automatically feeds those files to mystique. 
 
