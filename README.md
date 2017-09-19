@@ -29,6 +29,7 @@ Mystique’s output shows that after the likely infection marker was introduced 
 Required set up: 
 1. Cuckoo Sandbox with a Windows guest machine
 2. Python (v2.7). 
+2.1 Pymongo.
 3. Before running Mystique, the user should copy the Mystique package to Cuckoo’s packages folder. 
 4. The user should place the Mystique whitelist file in the same folder where the mystique.py script is located (or give a specific path in the configuration file).
 5. Mystique comes with a configuration file. The configuration file must be edited by the user - cuckoo and mongodb ip addresses and ports, VT api key (optional), and output path.
