@@ -2,7 +2,7 @@ try:
     from pymongo import MongoClient
 except:
     ImportError
-    print "pymongo import failed! ¯\_(ツ)_/¯ "
+    print "pymongo import failed! did you install it?"
 import sys
 import os
 import pickle
@@ -335,26 +335,26 @@ def submit_sample_with_mutant(REST_URL, SAMPLE_FILE, mutant, guest_machine):
         return task_id
 
 
-def main(SAMPLE_FILE):
+def main(sample_file):
     # Connecting to mongoDB to query it for results
     client = MongoClient(mongodb_ip, mongodb_port)
-    global db
-    global analysis
+    global db, analysis, api_key, REST_URL
+
     # Name of the database
     db = client[mongodb_dbname]
     # Name of the collection
     analysis = db[mongodb_collection]
-    global api_key
+
     api_key = config['virustotal'].get('api_key')
     logger.info("Connected to DB...")
 
     # Submitting file to analysis
-    global REST_URL
+
     # REST api to create new tasks
     REST_URL = 'http://{0}:{1}/tasks/create/file'.format(cuckoo_ip, cuckoo_port)
     # Submitting the sample to cuckoo, receiving back it's task ID
-    first_id = submit_sample(SAMPLE_FILE, guest_machine_name)
-    logger.info('{0} : First time sample is running. Current task id is {1}'.format(SAMPLE_FILE, first_id))
+    first_id = submit_sample(sample_file, guest_machine_name)
+    logger.info('{0} : First time sample is running. Current task id is {1}'.format(sample_file, first_id))
     # waiting for analysis to stop running
     wait_for_analysis_report(first_id)
     # Check that indeed a report was created, otherwise it won't work
@@ -367,15 +367,27 @@ def main(SAMPLE_FILE):
             for checking in mutexes_to_check.values()[index]:
                 logger.info("Testing mutex: " + checking)
                 # Submit the same sample, with different mutant
-                curr_task_id = submit_sample_with_mutant(REST_URL, SAMPLE_FILE, checking, guest_machine_name)
+                curr_task_id = submit_sample_with_mutant(REST_URL, sample_file, checking, guest_machine_name)
                 # Suspend script until the task is reported and has results
                 wait_for_analysis_report(curr_task_id)
                 is_reported(curr_task_id)
                 # Returns if this mutant can vaccinate against the sample
-                return_bad_mutexes(curr_task_id, first_id, checking, mutex, SAMPLE_FILE, output_csv_file)
-    logger.info('Finished examining all mutants for {0}. Check the output csv file.'.format(SAMPLE_FILE))
+                return_bad_mutexes(curr_task_id, first_id, checking, mutex, sample_file, output_csv_file)
+    logger.info('Finished examining all mutants for {0}. Check the output csv file.'.format(sample_file))
+
+def usage(av):
+  print """
+  Mystique may be used to discover infection markers that can be used to
+  vaccinate endpoints against malware. It receives as input a malicious sample
+   and automatically generates a list of mutexes that could be used to as
+   "vaccines" against the sample.
+        """
+  print "usage: %s filename" % (av)
+  sys.exit(-1)
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+      usage(sys.argv[0])
     try:
         main(sys.argv[1])
     except Exception as e:
