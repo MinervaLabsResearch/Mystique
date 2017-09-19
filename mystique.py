@@ -1,4 +1,8 @@
-from pymongo import MongoClient
+try:
+    from pymongo import MongoClient
+except:
+    ImportError
+    print "pymongo import failed! ¯\_(ツ)_/¯ "
 import sys
 import os
 import pickle
@@ -7,10 +11,9 @@ import time
 import re
 import csv
 import logging
-import subprocess
 import configparser
-from pprint import pprint
-from bson.objectid import ObjectId
+#from pprint import pprint # where is this used?
+# from bson.objectid import ObjectId # where is this used?
 from datetime import datetime, timedelta
 
 
