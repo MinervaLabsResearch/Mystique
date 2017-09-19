@@ -1,4 +1,3 @@
-# NOQA E111
 try:
     from pymongo import MongoClient
 except ImportError:
@@ -398,7 +397,7 @@ def submit_sample_with_mutant(url, sample_file, mutant, guest_machine):
 
 
 def main(sample_file):
-    global db, analysis, api_key, REST_URL, cuckoo_ip, cuckoo_port,
+    global db, analysis, api_key, REST_URL, cuckoo_ip, cuckoo_port
     global guest_machine_name
 
     try:
@@ -449,9 +448,9 @@ def main(sample_file):
           'Finished examining all mutants for {0}. Check the output csv file.'.format(
               sample_file))
     except:
-    import traceback
-    print "oh : ["
-    print traceback.print_exc()
+      import traceback
+      print "oh : ["
+      print traceback.print_exc()
 
 
 def usage(av):
